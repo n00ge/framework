@@ -637,9 +637,13 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
 	 * @param  string  $otherKey
 	 * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
 	 */
-	public function belongsToMany($related, $table = null, $foreignKey = null, $otherKey = null)
+	public function belongsToMany($related, $table = null, $foreignKey = null, $otherKey = null, $name = null)
 	{
-		$caller = $this->getBelongsToManyCaller();
+		if (is_null($name))
+		{
+			$caller = $this->getBelongsToManyCaller();
+			$name = $caller['function'];
+		}
 
 		// First, we'll need to determine the foreign key and "other key" for the
 		// relationship. Once we have determined the keys we'll make the query
@@ -663,7 +667,7 @@ abstract class Model implements ArrayAccess, ArrayableInterface, JsonableInterfa
 		// appropriate query constraint and entirely manages the hydrations.
 		$query = $instance->newQuery();
 
-		return new BelongsToMany($query, $this, $table, $foreignKey, $otherKey, $caller['function']);
+		return new BelongsToMany($query, $this, $table, $foreignKey, $otherKey, $name);
 	}
 
 	/**
